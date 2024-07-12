@@ -99,6 +99,10 @@
   border: 2px solid white;
 }
 
+.product-cards-container .product-card__variant.selected {
+  border: 2px solid white;
+}
+
 .product-cards-container .product-card__price-wishlist {
   display: flex;
   justify-content: space-between;

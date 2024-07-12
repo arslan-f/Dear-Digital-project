@@ -11,8 +11,12 @@ const productCardMaker = (productData) => {
   if (productData.variants && productData.variants.length > 0) {
     variantsHTML = productData.variants
       .map(
-        (variant) => `
-        <div class="product-card__variant" style="background-color: ${variant.color};" data-label="${variant.label}">
+        (variant, index) => `
+        <div class="product-card__variant ${
+          index === 0 ? "selected" : ""
+        }" style="background-color: ${variant.color};" data-label="${
+          variant.label
+        }">
         </div>
       `
       )
@@ -91,6 +95,11 @@ const productCardMaker = (productData) => {
   const variants = productCard.querySelectorAll(".product-card__variant");
   variants.forEach((variant, index) => {
     variant.addEventListener("click", () => {
+      // Remove 'selected' from all variants
+      variants.forEach((v) => v.classList.remove("selected"));
+      // Add 'selected' to the clicked variant
+      variant.classList.add("selected");
+
       // Update image src based on selected variant
       productCard.querySelector(
         "img"
