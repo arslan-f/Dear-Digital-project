@@ -47,6 +47,7 @@ const wishlistFunction = () => {
       targetElement &&
       targetElement.classList.contains("product-card__wishlist")
     ) {
+      // Getting all the wishlisted product data
       const productCard = targetElement.closest(".product-card");
       const title = productCard.querySelector(
         ".product-card__title"
@@ -54,9 +55,15 @@ const wishlistFunction = () => {
       const image = productCard.querySelector(
         ".product-card__image-container img"
       ).src;
-      const price = productCard.querySelector(
-        ".product-card__price"
-      ).textContent;
+      // Extract the active price (discounted price if available or normal price)
+      let priceElement = productCard.querySelector(".discounted-price");
+      if (!priceElement) {
+        priceElement = productCard.querySelector(".normal-price");
+      }
+      if (!priceElement) {
+        priceElement = productCard.querySelector(".product-card__price");
+      }
+      const price = priceElement.textContent;
       const label = productCard.querySelector(".product-card__variant").dataset
         .label;
 

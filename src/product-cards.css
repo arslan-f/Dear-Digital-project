@@ -108,6 +108,10 @@
   justify-content: space-between;
 }
 
+.product-card__price .normal-price {
+  text-decoration: line-through;
+}
+
 .product-cards-container .product-card__wishlist {
   border: 1px solid white;
   padding: 8px 15px;

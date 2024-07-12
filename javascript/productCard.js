@@ -1,4 +1,3 @@
-//   Making the product card
 const productCardMaker = (productData) => {
   const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
   const productCardContainer = document.querySelector(
@@ -7,65 +6,67 @@ const productCardMaker = (productData) => {
   if (!productCardContainer) return;
 
   // Construct HTML for product card variants
-  let variantsHTML = "";
-  if (productData.variants && productData.variants.length > 0) {
-    variantsHTML = productData.variants
-      .map(
-        (variant, index) => `
-        <div class="product-card__variant ${
-          index === 0 ? "selected" : ""
-        }" style="background-color: ${variant.color};" data-label="${
-          variant.label
-        }">
-        </div>
-      `
-      )
-      .join("");
-  }
+  let variantsHTML = productData.variants
+    .map(
+      (variant, index) => `
+      <div class="product-card__variant ${index === 0 ? "selected" : ""}" 
+           style="background-color: ${variant.color};" 
+           data-label="${variant.label}">
+      </div>
+    `
+    )
+    .join("");
 
-  // Construct HTML for product card prices
   const defaultVariant = productData.variants[0];
   const defaultImage = defaultVariant.image;
 
-  const defaultPriceFormatted = defaultVariant.price
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-  const defaultPriceDisplay = `€${defaultPriceFormatted}`;
+  // Formatting price for display
+  const formatPrice = (price) =>
+    price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const defaultPriceDisplay = `€${formatPrice(defaultVariant.price)}`;
+  const defaultReducedPriceDisplay = defaultVariant.reducedPrice
+    ? `€${formatPrice(defaultVariant.reducedPrice)}`
+    : null;
 
   let tagsHTML = "";
   if (productData.tags && productData.tags.length > 0) {
-    tagsHTML = `
-        <div class="product-card__tags">
-          ${productData.tags
-            .map((tag) => `<div class="product-card__tag">${tag}</div>`)
-            .join("")}
-        </div>
-      `;
+    tagsHTML = `<div class="product-card__tags">
+      ${productData.tags
+        .map((tag) => `<div class="product-card__tag">${tag}</div>`)
+        .join("")}
+    </div>`;
   }
 
   const productCard = document.createElement("div");
   productCard.classList.add("product-card");
-
   productCard.innerHTML = `
-          <div class="product-card__image-container">
-              ${tagsHTML}
-              <img src="../${defaultImage}" alt="${productData.title}"/>
-          </div>
-          <div class="product-card__details">
-            <h4 class="product-card__title">${productData.title}</h4>
-            <p class="product-card__description">${productData.description}</p>
-            <div class="product-card__variants">
-              ${variantsHTML}
-            </div>
-            <div class="product-card__price-wishlist">
-          <div class="product-card__price">${defaultPriceDisplay}</div>
-              <div class="product-card__wishlist ${
-                wishlist.find((item) => item.title === productData.title)
-                  ? "active"
-                  : ""
-              }">
-                <svg
+    <div class="product-card__image-container">
+      ${tagsHTML}
+      <img src="../${defaultImage}" alt="${productData.title}"/>
+    </div>
+    <div class="product-card__details">
+      <h4 class="product-card__title">${productData.title}</h4>
+      <p class="product-card__description">${productData.description}</p>
+      <div class="product-card__variants">${variantsHTML}</div>
+      <div class="product-card__price-wishlist">
+        <div class="product-card__price">
+  
+  ${formatPrice(defaultPriceDisplay)}
+      ${
+        defaultReducedPriceDisplay
+          ? `<span class="discounted-price">€${formatPrice(
+              defaultReducedPriceDisplay
+            )}</span>`
+          : ""
+      }
+
+        </div>
+        <div class="product-card__wishlist ${
+          wishlist.find((item) => item.title === productData.title)
+            ? "active"
+            : ""
+        }">
+          <svg
                   width="20"
                   height="20"
                   viewBox="0 0 20 20"
@@ -84,36 +85,33 @@ const productCardMaker = (productData) => {
                     </clipPath>
                   </defs>
                 </svg>
-              </div>
-            </div>
-          </div>
-    `;
+        </div>
+      </div>
+    </div>
+  `;
 
   productCardContainer.appendChild(productCard);
 
-  // Add event listeners to update image based on variant selection
+  // Add event listeners to update image and price based on variant selection
   const variants = productCard.querySelectorAll(".product-card__variant");
   variants.forEach((variant, index) => {
     variant.addEventListener("click", () => {
-      // Remove 'selected' from all variants
       variants.forEach((v) => v.classList.remove("selected"));
-      // Add 'selected' to the clicked variant
       variant.classList.add("selected");
 
-      // Update image src based on selected variant
-      productCard.querySelector(
-        "img"
-      ).src = `../${productData.variants[index].image}`;
+      const selectedVariant = productData.variants[index];
+      productCard.querySelector("img").src = `../${selectedVariant.image}`;
 
-      // Update price based on selected variant
-      const selectedPrice = productData.variants[index].price;
-      const selectedPriceFormatted = selectedPrice
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-      productCard.querySelector(
-        ".product-card__price"
-      ).textContent = `€${selectedPriceFormatted}`;
+      const selectedPrice = selectedVariant.price;
+      const selectedReducedPrice = selectedVariant.reducedPrice;
+      productCard.querySelector(".product-card__price").innerHTML = `${
+        selectedReducedPrice
+          ? `<span class="normal-price">€${formatPrice(selectedPrice)}</span>
+           <span class="discounted-price">€${formatPrice(
+             selectedReducedPrice
+           )}</span>`
+          : `€${formatPrice(selectedPrice)}`
+      }`;
     });
   });
 };
