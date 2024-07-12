@@ -54,7 +54,7 @@ const productCardMaker = (productData) => {
   ${formatPrice(defaultPriceDisplay)}
       ${
         defaultReducedPriceDisplay
-          ? `<span class="discounted-price">€${formatPrice(
+          ? `<span class="reduced-price">€${formatPrice(
               defaultReducedPriceDisplay
             )}</span>`
           : ""
@@ -107,7 +107,7 @@ const productCardMaker = (productData) => {
       productCard.querySelector(".product-card__price").innerHTML = `${
         selectedReducedPrice
           ? `<span class="normal-price">€${formatPrice(selectedPrice)}</span>
-           <span class="discounted-price">€${formatPrice(
+           <span class="reduced-price">€${formatPrice(
              selectedReducedPrice
            )}</span>`
           : `€${formatPrice(selectedPrice)}`

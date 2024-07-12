@@ -56,7 +56,7 @@ const wishlistFunction = () => {
         ".product-card__image-container img"
       ).src;
       // Extract the active price (discounted price if available or normal price)
-      let priceElement = productCard.querySelector(".discounted-price");
+      let priceElement = productCard.querySelector(".reduced-price");
       if (!priceElement) {
         priceElement = productCard.querySelector(".normal-price");
       }
